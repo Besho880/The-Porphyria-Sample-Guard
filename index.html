@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>The Porphyria Sample Guard
+
+</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+
+<body>
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+
+        <div class="logo">
+            <div class="logo-icon">
+                <i class="fa-solid fa-shield-heart"></i>
+            </div>
+
+            <div>
+                <h1>The Porphyria Sample Guard
+
+</h1>
+                <p>Smart Specimen System</p>
+            </div>
+        </div>
+
+
+        <nav>
+
+            <button class="nav-btn active" onclick="showPage('dashboard', this)">
+                <i class="fa-solid fa-house"></i>
+                <span>Dashboard</span>
+            </button>
+
+            <button class="nav-btn" onclick="showPage('ai', this)">
+                <i class="fa-solid fa-brain"></i>
+                <span>AI Analysis</span>
+            </button>
+
+            <button class="nav-btn" onclick="showPage('alerts', this)">
+                <i class="fa-solid fa-bell"></i>
+                <span>Alerts</span>
+                <b id="alertCount">2</b>
+            </button>
+
+            <button class="nav-btn" onclick="showPage('history', this)">
+                <i class="fa-solid fa-chart-line"></i>
+                <span>Data History</span>
+            </button>
+
+            <button class="nav-btn" onclick="showPage('tracking', this)">
+                <i class="fa-solid fa-location-dot"></i>
+                <span>Tracking</span>
+            </button>
+
+        </nav>
+
+
+        <div class="system-status">
+
+            <span class="online-dot"></span>
+
+            <div>
+                <strong>System Online</strong>
+                <small>All sensors connected</small>
+            </div>
+
+        </div>
+
+    </aside>
+
+
+    <!-- Main -->
+    <main class="main">
+
+        <!-- Top bar -->
+        <header class="topbar">
+
+            <div>
+                <p class="welcome">Welcome back</p>
+                <h2>The Porphyria Sample Guard
+
+</h2>
+            </div>
+
+            <button class="refresh-btn" onclick="refreshData()">
+                <i class="fa-solid fa-rotate"></i>
+                Refresh Data
+            </button>
+
+        </header>
+
+
+        <!-- DASHBOARD -->
+        <section id="dashboard" class="page">
+
+            <div class="section-title">
+
+                <div>
+                    <h2>Sample Overview</h2>
+                    <p>Real-time monitoring of the tissue sample.</p>
+                </div>
+
+                <span class="live">
+                    <span></span> LIVE
+                </span>
+
+            </div>
+
+
+            <!-- Main status -->
+            <div class="main-status">
+
+                <div class="status-left">
+
+                    <div class="status-icon">
+                        <i class="fa-solid fa-shield-check"></i>
+                    </div>
+
+                    <div>
+                        <span class="small-label">CURRENT SAMPLE STATUS</span>
+
+                        <h1 id="sampleStatus">
+                            SAFE
+                        </h1>
+
+                        <p id="statusMessage">
+                            No major problems detected.
+                        </p>
+                    </div>
+
+                </div>
+
+
+                <div class="risk-box">
+
+                    <span>AI RISK SCORE</span>
+
+                    <strong id="riskScore">
+                        18%
+                    </strong>
+
+                    <small>Low risk</small>
+
+                </div>
+
+            </div>
+
+
+            <!-- Sensor cards -->
+            <div class="sensor-grid">
+
+                <div class="sensor-card" onclick="openSensor('temperature')">
+
+                    <div class="sensor-top">
+
+                        <div class="sensor-icon blue">
+                            <i class="fa-solid fa-temperature-half"></i>
+                        </div>
+
+                        <i class="fa-solid fa-arrow-up-right-from-square open-icon"></i>
+
+                    </div>
+
+                    <span>Temperature</span>
+
+                    <h2 id="temperature">
+                        22.4°C
+                    </h2>
+
+                    <p class="normal">
+                        <i class="fa-solid fa-circle"></i>
+                        Normal range
+                    </p>
+
+                </div>
+
+
+                <div class="sensor-card" onclick="openSensor('light')">
+
+                    <div class="sensor-top">
+
+                        <div class="sensor-icon yellow">
+                            <i class="fa-solid fa-sun"></i>
+                        </div>
+
+                        <i class="fa-solid fa-arrow-up-right-from-square open-icon"></i>
+
+                    </div>
+
+                    <span>Light Level</span>
+
+                    <h2 id="light">
+                        6 lux
+                    </h2>
+
+                    <p class="normal">
+                        <i class="fa-solid fa-circle"></i>
+                        Normal
+                    </p>
+
+                </div>
+
+
+                <div class="sensor-card" onclick="openSensor('time')">
+
+                    <div class="sensor-top">
+
+                        <div class="sensor-icon purple">
+                            <i class="fa-solid fa-clock"></i>
+                        </div>
+
+                        <i class="fa-solid fa-arrow-up-right-from-square open-icon"></i>
+
+                    </div>
+
+                    <span>Transport Time</span>
+
+                    <h2 id="transportTime">
+                        00:32
+                    </h2>
+
+                    <p class="normal">
+                        <i class="fa-solid fa-circle"></i>
+                        On schedule
+                    </p>
+
+                </div>
+
+
+                <div class="sensor-card" onclick="showPage('tracking', document.querySelectorAll('.nav-btn')[4])">
+
+                    <div class="sensor-top">
+
+                        <div class="sensor-icon teal">
+                            <i class="fa-solid fa-location-dot"></i>
+                        </div>
+
+                        <i class="fa-solid fa-arrow-up-right-from-square open-icon"></i>
+
+                    </div>
+
+                    <span>GPS Location</span>
+
+                    <h2>
+                        Active
+                    </h2>
+
+                    <p class="normal">
+                        <i class="fa-solid fa-circle"></i>
+                        Tracking
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- Dashboard bottom -->
+            <div class="dashboard-grid">
+
+                <div class="panel">
+
+                    <div class="panel-header">
+
+                        <div>
+                            <span class="small-label">AI MONITORING</span>
+                            <h3>Transport Analysis</h3>
+                        </div>
+
+                        <button onclick="showPage('ai', document.querySelectorAll('.nav-btn')[1])">
+                            View AI Analysis
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </button>
+
+                    </div>
+
+
+                    <div class="mini-chart">
+
+                        <div class="chart-line">
+                            <span style="height:35%"></span>
+                            <span style="height:40%"></span>
+                            <span style="height:45%"></span>
+                            <span style="height:43%"></span>
+                            <span style="height:55%"></span>
+                            <span style="height:62%"></span>
+                            <span style="height:58%"></span>
+                            <span style="height:68%"></span>
+                        </div>
+
+                    </div>
+
+                    <div class="chart-labels">
+                        <span>10:00</span>
+                        <span>10:10</span>
+                        <span>10:20</span>
+                        <span>10:30</span>
+                    </div>
+
+                </div>
+
+
+                <div class="panel">
+
+                    <div class="panel-header">
+
+                        <div>
+                            <span class="small-label">RECENT ALERTS</span>
+                            <h3>Latest Activity</h3>
+                        </div>
+
+                        <button onclick="showPage('alerts', document.querySelectorAll('.nav-btn')[2])">
+                            View All
+                        </button>
+
+                    </div>
+
+
+                    <div class="activity">
+
+                        <div class="activity-icon warning-icon">
+                            <i class="fa-solid fa-temperature-high"></i>
+                        </div>
+
+                        <div>
+                            <strong>Temperature changed</strong>
+                            <p>10 minutes ago</p>
+                        </div>
+
+                        <span class="warning-text">Warning</span>
+
+                    </div>
+
+
+                    <div class="activity">
+
+                        <div class="activity-icon safe-icon">
+                            <i class="fa-solid fa-check"></i>
+                        </div>
+
+                        <div>
+                            <strong>System check</strong>
+                            <p>22 minutes ago</p>
+                        </div>
+
+                        <span class="safe-text">Normal</span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- AI -->
+        <section id="ai" class="page hidden">
+
+            <div class="section-title">
+
+                <div>
+                    <h2>AI Analysis</h2>
+                    <p>Smart analysis of transport conditions.</p>
+                </div>
+
+                <button class="ai-button" onclick="runAI()">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                    Run AI Analysis
+                </button>
+
+            </div>
+
+
+            <div class="ai-overview">
+
+                <div class="ai-score">
+
+                    <span>AI RISK SCORE</span>
+
+                    <div class="score-circle">
+                        <strong id="aiScore">18%</strong>
+                    </div>
+
+                    <h3 id="aiLevel">Low Risk</h3>
+
+                    <p id="aiSummary">
+                        The AI found no major problems with the current data.
+                    </p>
+
+                </div>
+
+
+                <div class="findings">
+
+                    <span class="small-label">AI FINDINGS</span>
+
+                    <h3>What did the AI find?</h3>
+
+                    <div class="finding">
+                        <i class="fa-solid fa-temperature-half"></i>
+
+                        <div>
+                            <strong>Main Factor</strong>
+                            <p id="mainFactor">Temperature is stable.</p>
+                        </div>
+                    </div>
+
+
+                    <div class="finding">
+                        <i class="fa-solid fa-chart-line"></i>
+
+                        <div>
+                            <strong>Pattern Detected</strong>
+                            <p id="pattern">No unusual pattern detected.</p>
+                        </div>
+                    </div>
+
+
+                    <div class="finding">
+                        <i class="fa-solid fa-lightbulb"></i>
+
+                        <div>
+                            <strong>AI Recommendation</strong>
+                            <p id="recommendation">Continue monitoring the sample.</p>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="panel large-panel">
+
+                <div class="panel-header">
+
+                    <div>
+                        <span class="small-label">DATA ANALYSIS</span>
+                        <h3>Temperature Over Time</h3>
+                    </div>
+
+                    <span class="chart-tag">AI MONITORED</span>
+
+                </div>
+
+
+                <div class="big-chart">
+
+                    <div class="y-labels">
+                        <span>30°</span>
+                        <span>27°</span>
+                        <span>24°</span>
+                        <span>21°</span>
+                    </div>
+
+                    <div class="bars">
+
+                        <div class="big-bar" style="height:35%"></div>
+                        <div class="big-bar" style="height:38%"></div>
+                        <div class="big-bar" style="height:42%"></div>
+                        <div class="big-bar" style="height:46%"></div>
+                        <div class="big-bar" style="height:48%"></div>
+                        <div class="big-bar" style="height:52%"></div>
+                        <div class="big-bar" style="height:58%"></div>
+                        <div class="big-bar" style="height:54%"></div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ALERTS -->
+        <section id="alerts" class="page hidden">
+
+            <div class="section-title">
+
+                <div>
+                    <h2>Alerts</h2>
+                    <p>Problems detected during transportation.</p>
+                </div>
+
+                <button class="clear-btn" onclick="clearAlerts()">
+                    Clear Alerts
+                </button>
+
+            </div>
+
+
+            <div id="alertList">
+
+                <div class="alert-card warning-card">
+
+                    <div class="alert-icon">
+                        <i class="fa-solid fa-temperature-high"></i>
+                    </div>
+
+                    <div class="alert-content">
+
+                        <h3>Temperature Change</h3>
+
+                        <p>
+                            The temperature increased during transportation.
+                        </p>
+
+                        <small>10:24 AM · Temperature Sensor</small>
+
+                    </div>
+
+                    <span class="alert-status warning-text">
+                        Warning
+                    </span>
+
+                </div>
+
+
+                <div class="alert-card safe-card">
+
+                    <div class="alert-icon">
+                        <i class="fa-solid fa-check"></i>
+                    </div>
+
+                    <div class="alert-content">
+
+                        <h3>System Check</h3>
+
+                        <p>
+                            All sensors are connected and working.
+                        </p>
+
+                        <small>10:10 AM · System</small>
+
+                    </div>
+
+                    <span class="alert-status safe-text">
+                        Normal
+                    </span>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- HISTORY -->
+        <section id="history" class="page hidden">
+
+            <div class="section-title">
+
+                <div>
+                    <h2>Data History</h2>
+                    <p>Previous sample transportation records.</p>
+                </div>
+
+            </div>
+
+
+            <div class="table-panel">
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+                            <th>Trip</th>
+                            <th>Date</th>
+                            <th>Temperature</th>
+                            <th>Light</th>
+                            <th>AI Risk</th>
+                            <th>Action</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        <tr>
+                            <td><strong>PG-001</strong></td>
+                            <td>06 Oct 2026</td>
+                            <td>22.4°C</td>
+                            <td>6 lux</td>
+                            <td><span class="badge safe-badge">18%</span></td>
+                            <td>
+                                <button class="view-btn" onclick="viewReport('PG-001')">
+                                    View Report
+                                </button>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>PG-002</strong></td>
+                            <td>05 Oct 2026</td>
+                            <td>24.8°C</td>
+                            <td>22 lux</td>
+                            <td><span class="badge warning-badge">46%</span></td>
+                            <td>
+                                <button class="view-btn" onclick="viewReport('PG-002')">
+                                    View Report
+                                </button>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>PG-003</strong></td>
+                            <td>04 Oct 2026</td>
+                            <td>27.1°C</td>
+                            <td>61 lux</td>
+                            <td><span class="badge danger-badge">79%</span></td>
+                            <td>
+                                <button class="view-btn" onclick="viewReport('PG-003')">
+                                    View Report
+                                </button>
+                            </td>
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+
+        <!-- TRACKING -->
+        <section id="tracking" class="page hidden">
+
+            <div class="section-title">
+
+                <div>
+                    <h2>Live Tracking</h2>
+                    <p>Track the sample box during transportation.</p>
+                </div>
+
+                <button class="track-btn" onclick="startTracking()">
+                    <i class="fa-solid fa-location-crosshairs"></i>
+                    Start Tracking
+                </button>
+
+            </div>
+
+
+            <div class="tracking-container">
+
+                <div class="fake-map">
+
+                    <div class="map-grid"></div>
+
+                    <div class="route"></div>
+
+                    <div class="map-point start">
+                        <i class="fa-solid fa-hospital"></i>
+                    </div>
+
+                    <div class="map-point current" id="currentLocation">
+                        <i class="fa-solid fa-box"></i>
+                    </div>
+
+                    <div class="map-point end">
+                        <i class="fa-solid fa-flask"></i>
+                    </div>
+
+                </div>
+
+
+                <div class="tracking-info">
+
+                    <div class="location-item">
+                        <i class="fa-solid fa-hospital"></i>
+
+                        <div>
+                            <span>START</span>
+                            <strong>Hospital</strong>
+                        </div>
+                    </div>
+
+
+                    <div class="location-line"></div>
+
+
+                    <div class="location-item current-location">
+
+                        <i class="fa-solid fa-box"></i>
+
+                        <div>
+                            <span>CURRENT LOCATION</span>
+                            <strong id="gpsStatus">Tracking active</strong>
+                        </div>
+
+                    </div>
+
+
+                    <div class="location-line"></div>
+
+
+                    <div class="location-item">
+
+                        <i class="fa-solid fa-flask"></i>
+
+                        <div>
+                            <span>DESTINATION</span>
+                            <strong>Laboratory</strong>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- Modal -->
+    <div id="modal" class="modal hidden">
+
+        <div class="modal-box">
+
+            <button class="close-modal" onclick="closeModal()">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <div id="modalContent"></div>
+
+        </div>
+
+    </div>
+
+
+    <script src="script.js"></script>
+</body>
+
+</html>
