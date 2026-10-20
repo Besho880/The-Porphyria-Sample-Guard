@@ -1,3 +1,4 @@
+
 // ========================================
 // The Porphyria Sample Guard - JAVASCRIPT
 // ========================================
@@ -8,8 +9,8 @@ let sensorData = {
     transportTime: 25
 };
 
-let trackingInterval;
-
+let trackingInterval = null;
+let trackingPosition = 0;
 
 // ========================================
 // PAGE NAVIGATION
@@ -37,41 +38,57 @@ function showPage(pageName, button) {
     }
 }
 
+// ========================================
+// UPDATE SENSOR DISPLAYS
+// ========================================
+
+function updateSensorDisplays() {
+    const temperature = document.getElementById("temperature");
+    const light = document.getElementById("light");
+    const time = document.getElementById("transportTime");
+
+    if (temperature) {
+        temperature.textContent = sensorData.temperature.toFixed(1) + "°C";
+    }
+
+    if (light) {
+        light.textContent = sensorData.light + " lux";
+    }
+
+    if (time) {
+        time.textContent = sensorData.transportTime + " min";
+    }
+}
 
 // ========================================
-// CALCULATE AI RISK
+// CALCULATE SAMPLE RISK
+// Rule-based simulated analysis
 // ========================================
 
 function calculateRisk() {
     let risk = 15;
     let factors = [];
 
-    // Temperature
     if (sensorData.temperature >= 27) {
         risk += 45;
         factors.push("High temperature");
-    }
-    else if (sensorData.temperature >= 24) {
+    } else if (sensorData.temperature >= 24) {
         risk += 25;
         factors.push("Elevated temperature");
     }
 
-    // Light
     if (sensorData.light >= 50) {
         risk += 30;
         factors.push("High light exposure");
-    }
-    else if (sensorData.light >= 20) {
+    } else if (sensorData.light >= 20) {
         risk += 15;
         factors.push("Increased light exposure");
     }
 
-    // Transport time
     if (sensorData.transportTime >= 60) {
         risk += 25;
         factors.push("Long transport time");
-    }
-    else if (sensorData.transportTime >= 40) {
+    } else if (sensorData.transportTime >= 40) {
         risk += 10;
         factors.push("Extended transport time");
     }
@@ -82,39 +99,33 @@ function calculateRisk() {
 
     if (risk >= 70) {
         level = "High Risk";
-    }
-    else if (risk >= 35) {
+    } else if (risk >= 35) {
         level = "Warning";
     }
 
-    let mainFactor = "Recorded test conditions";
+    let mainFactor = factors.length > 0
+        ? factors[0]
+        : "Recorded test conditions";
 
     if (sensorData.temperature >= 27) {
         mainFactor = "Temperature";
-    }
-    else if (sensorData.light >= 50) {
+    } else if (sensorData.light >= 50) {
         mainFactor = "Light Level";
-    }
-    else if (sensorData.transportTime >= 60) {
+    } else if (sensorData.transportTime >= 60) {
         mainFactor = "Transport Time";
     }
-    else if (factors.length > 0) {
-        mainFactor = factors[0];
-    }
 
-    let pattern = "Conditions stayed within the recorded test values.";
+    let pattern =
+        "Conditions stayed within the recorded test values.";
 
     if (sensorData.temperature >= 27) {
-        pattern = "High temperature detected";
-    }
-    else if (sensorData.light >= 50) {
-        pattern = "High light exposure detected";
-    }
-    else if (sensorData.transportTime >= 60) {
-        pattern = "Transport time is longer than expected";
-    }
-    else if (factors.length > 0) {
-        pattern = "Some changes were detected in the transport data";
+        pattern = "High temperature detected.";
+    } else if (sensorData.light >= 50) {
+        pattern = "High light exposure detected.";
+    } else if (sensorData.transportTime >= 60) {
+        pattern = "Transport time is longer than expected.";
+    } else if (factors.length > 0) {
+        pattern = "Some changes were detected in the transport data.";
     }
 
     return {
@@ -126,152 +137,141 @@ function calculateRisk() {
     };
 }
 
-
 // ========================================
-// RUN AI ANALYSIS
+// RUN ANALYSIS
 // ========================================
 
 function runAI() {
-
-    // Update sensor values
-    const temperatureDisplay = document.getElementById("temperature");
-    const lightDisplay = document.getElementById("light");
-    const timeDisplay = document.getElementById("transportTime");
-
-    if (temperatureDisplay) {
-        temperatureDisplay.textContent =
-            sensorData.temperature.toFixed(1) + "°C";
-    }
-
-    if (lightDisplay) {
-        lightDisplay.textContent =
-            sensorData.light + " lux";
-    }
-
-    if (timeDisplay) {
-        timeDisplay.textContent =
-            String(Math.floor(sensorData.transportTime / 60)).padStart(2, "0") +
-            ":" +
-            String(sensorData.transportTime % 60).padStart(2, "0");
-    }
-
-    console.log("AI Analysis Started");
+    updateSensorDisplays();
 
     const result = calculateRisk();
 
-    console.log("AI Result:", result);
-
-    // Dashboard Risk Score
     const riskScore = document.getElementById("riskScore");
+    const aiScore = document.getElementById("aiScore");
+    const aiLevel = document.getElementById("aiLevel");
+    const mainFactor = document.getElementById("mainFactor");
+    const pattern = document.getElementById("pattern");
+    const aiSummary = document.getElementById("aiSummary");
+    const recommendation = document.getElementById("recommendation");
 
     if (riskScore) {
         riskScore.textContent = result.risk + "%";
     }
 
-    // AI Risk Score
-    const aiScore = document.getElementById("aiScore");
-
     if (aiScore) {
         aiScore.textContent = result.risk + "%";
     }
-
-    // AI Level
-    const aiLevel = document.getElementById("aiLevel");
 
     if (aiLevel) {
         aiLevel.textContent = result.level;
     }
 
-    // Main Factor
-    const mainFactor = document.getElementById("mainFactor");
-
     if (mainFactor) {
         mainFactor.textContent = result.mainFactor;
     }
-
-    // Pattern
-    const pattern = document.getElementById("pattern");
 
     if (pattern) {
         pattern.textContent = result.pattern;
     }
 
-    // AI Summary
-    const aiSummary = document.getElementById("aiSummary");
-
     if (aiSummary) {
         if (result.risk >= 70) {
             aiSummary.textContent =
-                "The AI detected multiple risk factors that may affect the sample.";
-        }
-        else if (result.risk >= 35) {
+                "Several risk factors were detected in the recorded data.";
+        } else if (result.risk >= 35) {
             aiSummary.textContent =
-                "The AI detected some unusual changes in the transport conditions.";
-        }
-        else {
+                "Some unusual changes were detected in the transport conditions.";
+        } else {
             aiSummary.textContent =
-                "The AI found no major problems with the current transport conditions.";
+                "No major problems were found in the recorded transport conditions.";
         }
     }
-
-    // Recommendation
-    const recommendation = document.getElementById("recommendation");
 
     if (recommendation) {
         if (result.risk >= 70) {
             recommendation.textContent =
-                "Immediate attention is recommended. Check the sample conditions.";
-        }
-        else if (result.risk >= 35) {
+                "Check the sample and transport conditions immediately.";
+        } else if (result.risk >= 35) {
             recommendation.textContent =
-                "Monitor the sample closely and check the transport conditions.";
-        }
-        else {
+                "Monitor the sample and check the transport conditions.";
+        } else {
             recommendation.textContent =
-                "Continue monitoring the sample. Conditions are stable.";
+                "Continue monitoring the sample and record the conditions.";
         }
     }
 
-    // Update dashboard status
     updateSampleStatus(result);
+    updateAlertCount(result);
 
-    console.log("AI Analysis Completed");
+    console.log("Analysis result:", result);
+
+    return result;
 }
-
 
 // ========================================
 // UPDATE SAMPLE STATUS
 // ========================================
 
 function updateSampleStatus(result) {
-
     const status = document.getElementById("sampleStatus");
     const message = document.getElementById("statusMessage");
 
     if (status) {
         status.textContent = result.level.toUpperCase();
+
+        status.classList.remove(
+            "safe",
+            "warning",
+            "high-risk",
+            "low-risk"
+        );
+
+        if (result.risk >= 70) {
+            status.classList.add("high-risk");
+        } else if (result.risk >= 35) {
+            status.classList.add("warning");
+        } else {
+            status.classList.add("safe");
+        }
     }
 
     if (message) {
         if (result.risk >= 70) {
-            message.textContent = "Immediate attention is required.";
-        }
-        else if (result.risk >= 35) {
-            message.textContent = "Some unusual conditions were detected.";
-        }
-        else {
-            message.textContent = "No major problems detected.";
+            message.textContent =
+                "Immediate attention is recommended.";
+        } else if (result.risk >= 35) {
+            message.textContent =
+                "Some unusual conditions were detected.";
+        } else {
+            message.textContent =
+                "No major problems detected in this simulated test.";
         }
     }
 }
 
+// ========================================
+// UPDATE ALERT COUNT
+// ========================================
+
+function updateAlertCount(result) {
+    const alertCount = document.getElementById("alertCount");
+
+    if (!alertCount) {
+        return;
+    }
+
+    if (result.risk >= 35) {
+        alertCount.textContent = "1";
+    } else {
+        alertCount.textContent = "0";
+    }
+}
 
 // ========================================
 // REFRESH SENSOR DATA
 // ========================================
 
 function refreshData() {
-
     sensorData.temperature =
         Number((20 + Math.random() * 9).toFixed(1));
 
@@ -281,41 +281,14 @@ function refreshData() {
     sensorData.transportTime =
         Math.floor(20 + Math.random() * 70);
 
-    const temperature = document.getElementById("temperature");
-
-    if (temperature) {
-        temperature.textContent =
-            sensorData.temperature.toFixed(1) + "°C";
-    }
-
-    const light = document.getElementById("light");
-
-    if (light) {
-        light.textContent = sensorData.light + " lux";
-    }
-
-    const time = document.getElementById("transportTime");
-
-    if (time) {
-        const hours = Math.floor(sensorData.transportTime / 60);
-        const minutes = sensorData.transportTime % 60;
-
-        time.textContent =
-            String(hours).padStart(2, "0") +
-            ":" +
-            String(minutes).padStart(2, "0");
-    }
-
     runAI();
 }
-
 
 // ========================================
 // SENSOR DETAILS
 // ========================================
 
 function openSensor(sensor) {
-
     const modal = document.getElementById("modal");
     const modalContent = document.getElementById("modalContent");
 
@@ -328,7 +301,6 @@ function openSensor(sensor) {
     let description = "";
 
     if (sensor === "temperature") {
-
         title = "Temperature Sensor";
         icon = "🌡️";
 
@@ -336,11 +308,9 @@ function openSensor(sensor) {
             "<strong>Current Temperature:</strong> " +
             sensorData.temperature.toFixed(1) +
             "°C<br><br>" +
-            "The temperature sensor monitors the sample conditions during transportation.";
-    }
+            "The sensor records temperature during the simulated transport.";
 
-    else if (sensor === "light") {
-
+    } else if (sensor === "light") {
         title = "Light Sensor";
         icon = "☀️";
 
@@ -348,11 +318,9 @@ function openSensor(sensor) {
             "<strong>Current Light Level:</strong> " +
             sensorData.light +
             " lux<br><br>" +
-            "The light sensor helps detect unexpected light exposure inside the transport box.";
-    }
+            "The sensor records light exposure inside the transport box.";
 
-    else if (sensor === "time") {
-
+    } else if (sensor === "time") {
         title = "Transport Time";
         icon = "⏱️";
 
@@ -360,7 +328,10 @@ function openSensor(sensor) {
             "<strong>Transport Time:</strong> " +
             sensorData.transportTime +
             " minutes<br><br>" +
-            "The system monitors how long the sample has been transported.";
+            "The system records how long the sample has been transported.";
+
+    } else {
+        return;
     }
 
     modalContent.innerHTML = `
@@ -370,7 +341,6 @@ function openSensor(sensor) {
             </div>
 
             <h2>${title}</h2>
-
             <p>${description}</p>
         </div>
     `;
@@ -379,13 +349,11 @@ function openSensor(sensor) {
     modal.classList.add("show");
 }
 
-
 // ========================================
 // CLOSE MODAL
 // ========================================
 
 function closeModal() {
-
     const modal = document.getElementById("modal");
 
     if (modal) {
@@ -394,13 +362,11 @@ function closeModal() {
     }
 }
 
-
 // ========================================
-// HISTORY REPORT
+// VIEW SAMPLE REPORTS
 // ========================================
 
 function viewReport(trip) {
-
     const modal = document.getElementById("modal");
     const modalContent = document.getElementById("modalContent");
 
@@ -408,82 +374,83 @@ function viewReport(trip) {
         return;
     }
 
-    let report = "";
+    const reports = {
+        "PG-001": {
+            status: "Low Risk",
+            temperature: "18°C",
+            light: "5 lux",
+            time: "25 minutes",
+            risk: "15%",
+            summary:
+                "In this simulated test, PG-001 recorded 18°C, " +
+                "5 lux of light, and 25 minutes of transportation. " +
+                "The estimated risk score was 15%, indicating low risk " +
+                "under the recorded test conditions."
+        },
 
-    if (trip === "PG-001") {
+        "PG-002": {
+            status: "Warning",
+            temperature: "24.8°C",
+            light: "22 lux",
+            time: "46 minutes",
+            risk: "65%",
+            summary:
+                "This simulated test recorded higher temperature " +
+                "and light exposure, along with a longer transport time. " +
+                "The rule-based analysis marked these conditions as a warning."
+        },
 
-        report = `
-            <h2>Trip Report - PG-001</h2>
+        "PG-003": {
+            status: "High Risk",
+            temperature: "27.1°C",
+            light: "61 lux",
+            time: "72 minutes",
+            risk: "100%",
+            summary:
+                "This simulated test recorded high temperature, " +
+                "high light exposure, and a long transport time. " +
+                "The analysis marked the sample as high risk."
+        }
+    };
+
+    const report = reports[trip];
+
+    if (!report) {
+        modalContent.innerHTML = `
+            <h2>Report Not Found</h2>
+            <p>Please select a valid sample report.</p>
+        `;
+    } else {
+        modalContent.innerHTML = `
+            <h2>Trip Report - ${trip}</h2>
 
             <div class="report-info">
-                <p><strong>Status:</strong> Safe</p>
-                <p><strong>Temperature:</strong> 18°C</p>
-                <p><strong>Light:</strong> 5 lux</p>
-                <p><strong>Transport Time:</strong> 25 minutes</p>
-                <p><strong>AI Risk Score:</strong> 15%</p>
+                <p><strong>Status:</strong> ${report.status}</p>
+                <p><strong>Temperature:</strong> ${report.temperature}</p>
+                <p><strong>Light:</strong> ${report.light}</p>
+                <p><strong>Transport Time:</strong> ${report.time}</p>
+                <p><strong>Risk Score:</strong> ${report.risk}</p>
             </div>
 
+            <p><strong>Summary:</strong> ${report.summary}</p>
+
             <p>
-                AI Summary: In this simulated test, PG-001 recorded
-                18°C, 5 lux of light, and 25 minutes of transportation.
-                The estimated risk score was 15%, indicating low risk.
+                <small>
+                    This is a simulated result, not a medical assessment.
+                </small>
             </p>
         `;
     }
-
-    else if (trip === "PG-002") {
-
-        report = `
-            <h2>Trip Report - PG-002</h2>
-
-            <div class="report-info">
-                <p><strong>Status:</strong> Warning</p>
-                <p><strong>Temperature:</strong> 24.8°C</p>
-                <p><strong>Light:</strong> 22 lux</p>
-                <p><strong>Transport Time:</strong> 46 minutes</p>
-                <p><strong>AI Risk Score:</strong> 46%</p>
-            </div>
-
-            <p>
-                AI Summary: Some unusual transport
-                conditions were detected.
-            </p>
-        `;
-    }
-
-    else if (trip === "PG-003") {
-
-        report = `
-            <h2>Trip Report - PG-003</h2>
-
-            <div class="report-info">
-                <p><strong>Status:</strong> High Risk</p>
-                <p><strong>Temperature:</strong> 27.1°C</p>
-                <p><strong>Light:</strong> 61 lux</p>
-                <p><strong>Transport Time:</strong> 72 minutes</p>
-                <p><strong>AI Risk Score:</strong> 79%</p>
-            </div>
-
-            <p>
-                AI Summary: Multiple risk factors
-                were detected during transportation.
-            </p>
-        `;
-    }
-
-    modalContent.innerHTML = report;
 
     modal.classList.remove("hidden");
     modal.classList.add("show");
 }
-
 
 // ========================================
 // CLEAR ALERTS
 // ========================================
 
 function clearAlerts() {
-
     const alertList = document.getElementById("alertList");
     const alertCount = document.getElementById("alertCount");
 
@@ -502,70 +469,86 @@ function clearAlerts() {
     }
 }
 
-
 // ========================================
-// GPS TRACKING
+// SIMULATED GPS TRACKING
 // ========================================
 
 function startTracking() {
-
     const gpsStatus = document.getElementById("gpsStatus");
     const currentLocation = document.getElementById("currentLocation");
     const button = document.querySelector(".track-btn");
 
+    // Clicking again stops the simulated tracking.
+    if (trackingInterval !== null) {
+        clearInterval(trackingInterval);
+        trackingInterval = null;
+
+        if (gpsStatus) {
+            gpsStatus.textContent = "GPS tracking paused";
+        }
+
+        if (button) {
+            button.innerHTML =
+                '<i class="fa-solid fa-location-crosshairs"></i> Start Tracking';
+        }
+
+        return;
+    }
+
     if (gpsStatus) {
-        gpsStatus.textContent = "GPS tracking active";
+        gpsStatus.textContent = "Simulated tracking active";
     }
 
     if (button) {
         button.innerHTML =
-            '<i class="fa-solid fa-location-crosshairs"></i> Tracking Active';
+            '<i class="fa-solid fa-pause"></i> Stop Tracking';
     }
 
-    let position = 0;
-
-    clearInterval(trackingInterval);
-
     trackingInterval = setInterval(function () {
-
-        position += 5;
-
-        if (position > 100) {
-            position = 0;
-        }
+        trackingPosition = (trackingPosition + 5) % 101;
 
         if (currentLocation) {
-            currentLocation.style.left = (20 + position * 0.6) + "%";
-            currentLocation.style.top = (45 - position * 0.15) + "%";
-        }
+            currentLocation.style.left =
+                (20 + trackingPosition * 0.6) + "%";
 
+            currentLocation.style.top =
+                (45 - trackingPosition * 0.15) + "%";
+        }
     }, 500);
 }
 
-
 // ========================================
-// CLOSE MODAL OUTSIDE
+// CLOSE MODAL BY CLICKING OUTSIDE
 // ========================================
 
 window.addEventListener("click", function (event) {
-
     const modal = document.getElementById("modal");
 
-    if (event.target === modal) {
+    if (modal && event.target === modal) {
         closeModal();
     }
 });
 
+// Close modal with Escape key.
+window.addEventListener("keydown", function (event) {
+    if (event.key === "Escape") {
+        closeModal();
+    }
+});
 
 // ========================================
 // PAGE LOAD
 // ========================================
 
 document.addEventListener("DOMContentLoaded", function () {
-
     const dashboard = document.getElementById("dashboard");
 
     if (dashboard) {
+        document.querySelectorAll(".page").forEach(function (page) {
+            page.classList.add("hidden");
+            page.classList.remove("active");
+        });
+
         dashboard.classList.remove("hidden");
         dashboard.classList.add("active");
     }
